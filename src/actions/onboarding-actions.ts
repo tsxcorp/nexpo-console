@@ -95,7 +95,7 @@ export async function onboardTenantAction(data: {
             firstName: data.admin_first_name,
             email: data.email,
             password,
-            loginUrl: "https://platform.nexpo.vn/login",
+            loginUrl: `https://platform.nexpo.vn/change-password?email=${encodeURIComponent(data.email)}&token=${encodeURIComponent(password)}`,
           }),
         }),
         cache: "no-store",
@@ -143,32 +143,23 @@ function buildWelcomeEmail(params: {
         </h2>
         <p style="color: #404040; font-size: 15px; line-height: 1.6; margin: 0 0 20px;">
           Tài khoản <strong>${params.tenantName}</strong> đã được tạo trên nền tảng Nexpo.
-          Dưới đây là thông tin đăng nhập của bạn:
+          Nhấn nút bên dưới để đặt mật khẩu và bắt đầu sử dụng.
         </p>
 
-        <div style="background: #ffffff; border-radius: 8px; padding: 20px; border: 1px solid #e5e7eb; margin: 20px 0;">
-          <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-              <td style="padding: 8px 0; color: #666; font-size: 14px; width: 100px;">Email:</td>
-              <td style="padding: 8px 0; font-weight: 600; font-size: 14px;">${params.email}</td>
-            </tr>
-            <tr>
-              <td style="padding: 8px 0; color: #666; font-size: 14px;">Mật khẩu:</td>
-              <td style="padding: 8px 0; font-weight: 600; font-size: 14px; font-family: monospace; letter-spacing: 1px;">${params.password}</td>
-            </tr>
-          </table>
+        <div style="background: #ffffff; border-radius: 8px; padding: 16px 20px; border: 1px solid #e5e7eb; margin: 20px 0;">
+          <p style="margin: 0; color: #666; font-size: 14px;">Email đăng nhập: <strong style="color: #1a1a1a;">${params.email}</strong></p>
         </div>
 
         <div style="text-align: center; margin: 25px 0;">
           <a href="${params.loginUrl}"
              style="display: inline-block; background: #4F80FF; color: #ffffff; text-decoration: none;
-                    padding: 12px 32px; border-radius: 8px; font-weight: 600; font-size: 15px;">
-            Đăng nhập ngay
+                    padding: 14px 36px; border-radius: 8px; font-weight: 600; font-size: 16px;">
+            Đặt mật khẩu & Đăng nhập
           </a>
         </div>
 
         <p style="color: #94a3b8; font-size: 13px; line-height: 1.5; margin: 20px 0 0; border-top: 1px solid #e5e7eb; padding-top: 15px;">
-          Vui lòng đổi mật khẩu sau lần đăng nhập đầu tiên.<br>
+          Link này chỉ sử dụng được một lần. Sau khi đặt mật khẩu, hãy dùng mật khẩu mới để đăng nhập.<br>
           Nếu bạn cần hỗ trợ, liên hệ <a href="mailto:contact@nexpo.vn" style="color: #4F80FF;">contact@nexpo.vn</a>
         </p>
       </div>
