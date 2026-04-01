@@ -90,6 +90,26 @@ export async function onboardTenantAction(data: {
       if (tiers.length > 0) features = tiers[0].features;
     }
 
+    // Create a Directus folder for this tenant's files
+    let folderFilesId: string | null = null;
+    try {
+      const folderRes = await fetch(`${DIRECTUS_URL}/folders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify({ name: data.name }),
+        cache: "no-store",
+      });
+      if (folderRes.ok) {
+        const folderData = await folderRes.json();
+        folderFilesId = folderData.data?.id ?? null;
+      }
+    } catch {
+      // Non-critical — tenant can still work without folder
+    }
+
     const tenant = await client.request(createItem("tenants", {
       name: data.name,
       email: data.email,
@@ -98,6 +118,7 @@ export async function onboardTenantAction(data: {
       features,
       default_language: data.default_language || "vi",
       timezone: data.timezone || "Asia/Ho_Chi_Minh",
+      folder_files_id: folderFilesId,
     })) as { id: number };
 
     // Step 3: Link user to tenant with invite token (48h expiry)
