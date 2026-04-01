@@ -20,7 +20,6 @@ const createSchema = z.object({
   timezone: z.string().optional(),
   admin_first_name: z.string().min(1, "First name is required"),
   admin_last_name: z.string().min(1, "Last name is required"),
-  admin_email: z.string().email("Invalid email"),
 });
 
 const editSchema = z.object({
@@ -59,7 +58,7 @@ export function TenantForm({ tenant, mode }: TenantFormProps) {
       subscription_tier: tenant?.subscription_tier ?? "",
       default_language: tenant?.default_language ?? "vi",
       timezone: tenant?.timezone ?? "Asia/Ho_Chi_Minh",
-      ...(mode === "create" ? { admin_first_name: "", admin_last_name: "", admin_email: "" } : {}),
+      ...(mode === "create" ? { admin_first_name: "", admin_last_name: "" } : {}),
     },
   });
 
@@ -75,7 +74,6 @@ export function TenantForm({ tenant, mode }: TenantFormProps) {
         timezone: d.timezone,
         admin_first_name: d.admin_first_name,
         admin_last_name: d.admin_last_name,
-        admin_email: d.admin_email,
       });
 
       if (result.success) {
@@ -173,7 +171,7 @@ export function TenantForm({ tenant, mode }: TenantFormProps) {
               Admin User — Tenant Admin
             </div>
             <p className="text-xs text-surface-400 mb-4">
-              Hệ thống sẽ tạo tài khoản Directus với role Tenant Admin và gửi email kèm mật khẩu.
+              Hệ thống sẽ tạo tài khoản Directus (dùng email ở trên) với role Tenant Admin và gửi email kèm mật khẩu.
             </p>
           </div>
 
@@ -190,11 +188,6 @@ export function TenantForm({ tenant, mode }: TenantFormProps) {
             </div>
           </div>
 
-          <div>
-            <label className={labelClass}>Email đăng nhập *</label>
-            <input {...(register as Function)("admin_email")} type="email" className={fieldClass} placeholder="admin@company.com" />
-            {errs.admin_email && <p className={errorClass}>{errs.admin_email.message}</p>}
-          </div>
         </>
       )}
 

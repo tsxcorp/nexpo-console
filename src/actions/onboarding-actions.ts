@@ -19,17 +19,14 @@ function generatePassword(): string {
 
 /** Full tenant onboarding: create tenant → create Directus user → link tenant_users → send welcome email */
 export async function onboardTenantAction(data: {
-  // Tenant info
   name: string;
   email: string;
   status?: string;
   subscription_tier?: string;
   default_language?: string;
   timezone?: string;
-  // Admin user info
   admin_first_name: string;
   admin_last_name: string;
-  admin_email: string;
 }) {
   const client = getAdminClient();
   const adminToken = process.env.DIRECTUS_ADMIN_TOKEN;
@@ -57,7 +54,7 @@ export async function onboardTenantAction(data: {
       body: JSON.stringify({
         first_name: data.admin_first_name,
         last_name: data.admin_last_name,
-        email: data.admin_email,
+        email: data.email,
         password,
         role: TENANT_ADMIN_ROLE_ID,
         status: "active",
@@ -91,12 +88,12 @@ export async function onboardTenantAction(data: {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           from_email: "Nexpo Platform <noreply@nexpo.vn>",
-          to: data.admin_email,
+          to: data.email,
           subject: `Chào mừng đến Nexpo — Tài khoản ${data.name}`,
           html: buildWelcomeEmail({
             tenantName: data.name,
             firstName: data.admin_first_name,
-            email: data.admin_email,
+            email: data.email,
             password,
             loginUrl: "https://app.nexpo.vn/login",
           }),
