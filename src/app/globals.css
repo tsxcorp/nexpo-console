@@ -1,0 +1,154 @@
+@import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
+
+/* ========================================
+   NEXPO CONSOLE - SUPER ADMIN THEME
+   ======================================== */
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+  /* Content Text Colors */
+  --content-primary: #1A1A1A;
+  --content-secondary: #404040;
+  --content-tertiary: #666666;
+
+  /* NEXPO Brand Colors */
+  --nexpo-blue: #4F80FF;
+  --nexpo-blue-light: #EEF4FF;
+  --nexpo-blue-dark: #1E40AF;
+
+  /* Surface Colors */
+  --surface-50: #f8fafc;
+  --surface-100: #f1f5f9;
+  --surface-200: #e2e8f0;
+  --surface-400: #94a3b8;
+  --surface-500: #64748b;
+  --surface-600: #475569;
+  --surface-700: #334155;
+  --surface-800: #1e293b;
+  --surface-900: #0f172a;
+
+  /* UI Element Colors */
+  --border-light: #E5E7EB;
+  --border-medium: #D1D5DB;
+
+  /* Sidebar — dark navy brand */
+  --sidebar-bg: #06043E;
+  --sidebar-text: #cbd5e1;
+  --sidebar-text-active: #ffffff;
+  --sidebar-accent: rgba(79, 128, 255, 0.15);
+}
+
+.dark {
+  --background: #0f172a;
+  --foreground: #f8fafc;
+
+  --content-primary: #f8fafc;
+  --content-secondary: #cbd5e1;
+  --content-tertiary: #94a3b8;
+
+  --border-light: #334155;
+  --border-medium: #475569;
+}
+
+/* Tailwind CSS 4 Theme */
+@theme {
+  /* NEXPO Primary Palette */
+  --color-nexpo-50: #EEF4FF;
+  --color-nexpo-100: #E0ECFF;
+  --color-nexpo-200: #C7DBFF;
+  --color-nexpo-300: #A5C4FF;
+  --color-nexpo-400: #82A3FF;
+  --color-nexpo-500: #4F80FF;
+  --color-nexpo-600: #3B6BF6;
+  --color-nexpo-700: #2C5CE2;
+  --color-nexpo-800: #1E40AF;
+  --color-nexpo-900: #1E3A8A;
+
+  /* Surface/Slate Colors */
+  --color-surface-50: #f8fafc;
+  --color-surface-100: #f1f5f9;
+  --color-surface-200: #e2e8f0;
+  --color-surface-300: #cbd5e1;
+  --color-surface-400: #94a3b8;
+  --color-surface-500: #64748b;
+  --color-surface-600: #475569;
+  --color-surface-700: #334155;
+  --color-surface-800: #1e293b;
+  --color-surface-900: #0f172a;
+
+  /* Semantic Colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-border: var(--border-light);
+  --color-primary: var(--nexpo-blue);
+  --color-primary-foreground: #ffffff;
+  --color-muted: var(--content-tertiary);
+
+  /* Content Text */
+  --color-content-primary: var(--content-primary);
+  --color-content-secondary: var(--content-secondary);
+  --color-content-tertiary: var(--content-tertiary);
+
+  /* Status Colors */
+  --color-success: #22C55E;
+  --color-success-light: #DCFCE7;
+  --color-warning: #F59E0B;
+  --color-warning-light: #FEF3C7;
+  --color-error: #EF4444;
+  --color-error-light: #FEE2E2;
+  --color-info: #3B82F6;
+  --color-info-light: #DBEAFE;
+
+  /* Font */
+  --font-sans: var(--font-be-vietnam-pro), system-ui, sans-serif;
+}
+
+/* Base styles */
+* { box-sizing: border-box; }
+
+body {
+  font-family: var(--font-be-vietnam-pro), system-ui, sans-serif;
+  color: var(--foreground);
+  background: var(--background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer base {
+  * { border-color: var(--border-light); outline-color: rgb(79 128 255 / 0.5); }
+  body { @apply antialiased selection:bg-nexpo-500/30; }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--surface-100); }
+::-webkit-scrollbar-thumb { background: var(--surface-400); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--surface-500); }
+.dark ::-webkit-scrollbar-track { background: var(--surface-800); }
+.dark ::-webkit-scrollbar-thumb { background: var(--surface-600); }
+
+/* Focus styles */
+*:focus { outline: none; }
+*:focus-visible { outline: 2px solid var(--nexpo-blue); outline-offset: 2px; }
+input:focus, textarea:focus, select:focus {
+  outline: none !important;
+  border-color: var(--nexpo-blue) !important;
+  box-shadow: 0 0 0 3px rgba(79, 128, 255, 0.1) !important;
+}
+
+/* Sonner toast overrides */
+[data-sonner-toaster] { z-index: 9999 !important; }
+[data-sonner-toast] {
+  background: white !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1) !important;
+  z-index: 9999 !important;
+}
+[data-sonner-toast][data-type="success"] { background: #f0fdf4 !important; border-color: #bbf7d0 !important; color: #166534 !important; }
+[data-sonner-toast][data-type="error"] { background: #fef2f2 !important; border-color: #fecaca !important; color: #dc2626 !important; }
+.dark [data-sonner-toast] { background: #1f2937 !important; border-color: #374151 !important; color: #f9fafb !important; }
+.dark [data-sonner-toast][data-type="success"] { background: #064e3b !important; border-color: #047857 !important; color: #d1fae5 !important; }
+.dark [data-sonner-toast][data-type="error"] { background: #7f1d1d !important; border-color: #dc2626 !important; color: #fecaca !important; }
