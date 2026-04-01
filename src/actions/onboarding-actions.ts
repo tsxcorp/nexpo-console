@@ -5,6 +5,7 @@ import { createItem } from "@directus/sdk";
 
 const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "https://app.nexpo.vn";
 const SERVICES_URL = process.env.NEXT_PUBLIC_SERVICES_URL || "https://services.nexpo.vn";
+const ADMIN_APP_URL = process.env.NEXPO_ADMIN_URL || "https://platform.nexpo.vn";
 const TENANT_ADMIN_ROLE_ID = "d8651e82-5b53-4ddc-8b5b-7e40f732983c";
 
 /** Generate a random 12-char password with mixed chars */
@@ -112,7 +113,7 @@ export async function onboardTenantAction(data: {
               firstName: data.admin_first_name,
               email: data.email,
               password,
-              loginUrl: `https://platform.nexpo.vn/change-password?email=${encodeURIComponent(data.email)}&token=${encodeURIComponent(password)}`,
+              loginUrl: `${ADMIN_APP_URL}/change-password?email=${encodeURIComponent(data.email)}&token=${encodeURIComponent(password)}`,
             }),
           }),
           cache: "no-store",
