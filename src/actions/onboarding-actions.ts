@@ -32,22 +32,11 @@ export async function onboardTenantAction(data: {
   const adminToken = process.env.DIRECTUS_ADMIN_TOKEN;
 
   try {
-    // Step 1: Create tenant
-    const tenant = await client.request(createItem("tenants", {
-      name: data.name,
-      email: data.email,
-      status: data.status || "active",
-      subscription_tier: data.subscription_tier || undefined,
-      default_language: data.default_language || "vi",
-      timezone: data.timezone || "Asia/Ho_Chi_Minh",
-    })) as { id: number };
-
-    // Step 2: Find existing user or create new one
+    // Step 1: Resolve user FIRST (before creating tenant to avoid orphans)
     const password = generatePassword();
     let userId = "";
     let isExistingUser = false;
 
-    // Check if user already exists
     const existingRes = await fetch(
       `${DIRECTUS_URL}/users?filter[email][_eq]=${encodeURIComponent(data.email)}&fields=id&limit=1`,
       { headers: { Authorization: `Bearer ${adminToken}` }, cache: "no-store" }
@@ -62,7 +51,6 @@ export async function onboardTenantAction(data: {
     }
 
     if (!isExistingUser) {
-      // Create new Directus user
       const userRes = await fetch(`${DIRECTUS_URL}/users`, {
         method: "POST",
         headers: {
@@ -83,12 +71,22 @@ export async function onboardTenantAction(data: {
       if (!userRes.ok) {
         const err = await userRes.json();
         const msg = err.errors?.[0]?.message || "Failed to create user";
-        return { success: false, error: `Tenant created but user creation failed: ${msg}`, tenantId: tenant.id };
+        return { success: false, error: msg };
       }
 
       const userData = await userRes.json();
       userId = userData.data.id;
     }
+
+    // Step 2: Create tenant (user is guaranteed to exist at this point)
+    const tenant = await client.request(createItem("tenants", {
+      name: data.name,
+      email: data.email,
+      status: data.status || "active",
+      subscription_tier: data.subscription_tier || undefined,
+      default_language: data.default_language || "vi",
+      timezone: data.timezone || "Asia/Ho_Chi_Minh",
+    })) as { id: number };
 
     // Step 3: Link user to tenant via tenant_users
     await client.request(createItem("tenant_users", {
