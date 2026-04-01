@@ -42,35 +42,53 @@ export async function onboardTenantAction(data: {
       timezone: data.timezone || "Asia/Ho_Chi_Minh",
     })) as { id: number };
 
-    // Step 2: Create Directus user with Tenant Admin role
+    // Step 2: Find existing user or create new one
     const password = generatePassword();
+    let userId = "";
+    let isExistingUser = false;
 
-    const userRes = await fetch(`${DIRECTUS_URL}/users`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${adminToken}`,
-      },
-      body: JSON.stringify({
-        first_name: data.admin_first_name,
-        last_name: data.admin_last_name,
-        email: data.email,
-        password,
-        role: TENANT_ADMIN_ROLE_ID,
-        status: "active",
-      }),
-      cache: "no-store",
-    });
+    // Check if user already exists
+    const existingRes = await fetch(
+      `${DIRECTUS_URL}/users?filter[email][_eq]=${encodeURIComponent(data.email)}&fields=id&limit=1`,
+      { headers: { Authorization: `Bearer ${adminToken}` }, cache: "no-store" }
+    );
 
-    if (!userRes.ok) {
-      const err = await userRes.json();
-      const msg = err.errors?.[0]?.message || "Failed to create user";
-      // Tenant was created but user failed — return partial success
-      return { success: false, error: `Tenant created but user creation failed: ${msg}`, tenantId: tenant.id };
+    if (existingRes.ok) {
+      const existing = await existingRes.json();
+      if (existing.data?.length > 0) {
+        userId = existing.data[0].id;
+        isExistingUser = true;
+      }
     }
 
-    const userData = await userRes.json();
-    const userId = userData.data.id;
+    if (!isExistingUser) {
+      // Create new Directus user
+      const userRes = await fetch(`${DIRECTUS_URL}/users`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify({
+          first_name: data.admin_first_name,
+          last_name: data.admin_last_name,
+          email: data.email,
+          password,
+          role: TENANT_ADMIN_ROLE_ID,
+          status: "active",
+        }),
+        cache: "no-store",
+      });
+
+      if (!userRes.ok) {
+        const err = await userRes.json();
+        const msg = err.errors?.[0]?.message || "Failed to create user";
+        return { success: false, error: `Tenant created but user creation failed: ${msg}`, tenantId: tenant.id };
+      }
+
+      const userData = await userRes.json();
+      userId = userData.data.id;
+    }
 
     // Step 3: Link user to tenant via tenant_users
     await client.request(createItem("tenant_users", {
@@ -81,41 +99,44 @@ export async function onboardTenantAction(data: {
       is_active: true,
     }));
 
-    // Step 4: Send welcome email with credentials
-    try {
-      await fetch(`${SERVICES_URL}/send-email`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          from_email: "Nexpo Platform <noreply@nexpo.vn>",
-          to: data.email,
-          subject: `Chào mừng đến Nexpo — Tài khoản ${data.name}`,
-          html: buildWelcomeEmail({
-            tenantName: data.name,
-            firstName: data.admin_first_name,
-            email: data.email,
-            password,
-            loginUrl: `https://platform.nexpo.vn/change-password?email=${encodeURIComponent(data.email)}&token=${encodeURIComponent(password)}`,
+    // Step 4: Send welcome email (only for new users — existing users already have credentials)
+    if (!isExistingUser) {
+      try {
+        await fetch(`${SERVICES_URL}/send-email`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            from_email: "Nexpo Platform <noreply@nexpo.vn>",
+            to: data.email,
+            subject: `Chào mừng đến Nexpo — Tài khoản ${data.name}`,
+            html: buildWelcomeEmail({
+              tenantName: data.name,
+              firstName: data.admin_first_name,
+              email: data.email,
+              password,
+              loginUrl: `https://platform.nexpo.vn/change-password?email=${encodeURIComponent(data.email)}&token=${encodeURIComponent(password)}`,
+            }),
           }),
-        }),
-        cache: "no-store",
-      });
-    } catch {
-      // Email send failed but onboarding succeeded — non-critical
-      return {
-        success: true,
-        tenantId: tenant.id,
-        userId,
-        emailSent: false,
-        generatedPassword: password,
-      };
+          cache: "no-store",
+        });
+      } catch {
+        return {
+          success: true,
+          tenantId: tenant.id,
+          userId,
+          emailSent: false,
+          isExistingUser,
+          generatedPassword: password,
+        };
+      }
     }
 
     return {
       success: true,
       tenantId: tenant.id,
       userId,
-      emailSent: true,
+      emailSent: !isExistingUser,
+      isExistingUser,
     };
   } catch (err) {
     return { success: false, error: String(err) };
