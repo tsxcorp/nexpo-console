@@ -57,7 +57,7 @@ export async function onboardTenantAction(data: {
         email: data.email,
         password,
         role: TENANT_ADMIN_ROLE_ID,
-        status: "active",
+        status: "invited",
       }),
       cache: "no-store",
     });
@@ -95,7 +95,7 @@ export async function onboardTenantAction(data: {
             firstName: data.admin_first_name,
             email: data.email,
             password,
-            loginUrl: "https://app.nexpo.vn/login",
+            loginUrl: "https://platform.nexpo.vn/login",
           }),
         }),
         cache: "no-store",
