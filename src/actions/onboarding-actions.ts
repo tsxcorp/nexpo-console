@@ -57,7 +57,7 @@ export async function onboardTenantAction(data: {
         email: data.email,
         password,
         role: TENANT_ADMIN_ROLE_ID,
-        status: "invited",
+        status: "active",
       }),
       cache: "no-store",
     });
