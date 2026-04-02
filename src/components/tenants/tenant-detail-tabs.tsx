@@ -8,8 +8,9 @@ import { TenantStatusBadge, TierBadge } from "./tenant-status-badge";
 import type { Tenant, TenantUser, DirectusUserInfo } from "@/types/tenant";
 import { Users, Calendar, Building2, Info, Globe, Clock, CreditCard, Mail, BarChart3 } from "lucide-react";
 import { TenantQuotaPanel } from "./tenant-quota-panel";
+import { TenantBillingTab } from "./tenant-billing-tab";
 
-const TABS = ["overview", "users", "events", "exhibitors", "usage"] as const;
+const TABS = ["overview", "users", "events", "exhibitors", "usage", "billing"] as const;
 type Tab = typeof TABS[number];
 
 function getUserDisplayName(user: string | DirectusUserInfo): string {
@@ -55,7 +56,7 @@ export function TenantDetailTabs({ tenant }: { tenant: Tenant }) {
     load();
   }, [activeTab, tenant.id, users.length, events.length, exhibitors.length]);
 
-  const tabIcons = { overview: Info, users: Users, events: Calendar, exhibitors: Building2, usage: BarChart3 };
+  const tabIcons = { overview: Info, users: Users, events: Calendar, exhibitors: Building2, usage: BarChart3, billing: CreditCard };
 
   return (
     <div>
@@ -75,7 +76,7 @@ export function TenantDetailTabs({ tenant }: { tenant: Tenant }) {
               )}
             >
               <Icon size={16} />
-              {t(`common.${tab === "overview" ? "overview" : tab}`)}
+              {t(`tenants.tab_${tab}`)}
             </button>
           );
         })}
@@ -100,6 +101,9 @@ export function TenantDetailTabs({ tenant }: { tenant: Tenant }) {
       )}
       {activeTab === "usage" && (
         <TenantQuotaPanel tenantId={tenant.id} />
+      )}
+      {activeTab === "billing" && (
+        <TenantBillingTab tenantId={tenant.id} />
       )}
     </div>
   );
@@ -157,7 +161,7 @@ function OverviewTab({ tenant }: { tenant: Tenant }) {
           <div className="flex flex-wrap gap-2">
             {tenant.features.map((f) => (
               <span key={f} className="px-2.5 py-1 bg-nexpo-50 dark:bg-nexpo-500/10 text-nexpo-600 dark:text-nexpo-400 text-xs font-medium rounded-lg">
-                {f}
+                {t(`features.${f}`, f)}
               </span>
             ))}
           </div>

@@ -131,6 +131,7 @@ function TierTable({ tiers, onEdit }: { tiers: SubscriptionTier[]; onEdit: (id: 
 }
 
 function FeatureMatrix({ tiers }: { tiers: SubscriptionTier[] }) {
+  const { t } = useTranslation();
   return (
     <div className="bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-xl overflow-hidden overflow-x-auto">
       <table className="w-full">
@@ -147,7 +148,7 @@ function FeatureMatrix({ tiers }: { tiers: SubscriptionTier[] }) {
         <tbody>
           {FEATURE_SLUGS.map((feature) => (
             <tr key={feature} className="border-b border-surface-100 dark:border-surface-700/50">
-              <td className="px-4 py-2.5 text-sm font-medium sticky left-0 bg-white dark:bg-surface-800">{feature}</td>
+              <td className="px-4 py-2.5 text-sm font-medium sticky left-0 bg-white dark:bg-surface-800">{t(`features.${feature}`, feature)}</td>
               {tiers.map((tier) => {
                 const has = tier.features?.includes(feature);
                 return (

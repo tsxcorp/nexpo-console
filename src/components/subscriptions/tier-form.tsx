@@ -120,7 +120,7 @@ export function TierForm({ tier, mode }: TierFormProps) {
                 defaultChecked={features.includes(f)}
                 className="rounded border-surface-300"
               />
-              <span className="text-sm">{f}</span>
+              <span className="text-sm">{t(`features.${f}`, f)}</span>
             </label>
           ))}
         </div>
@@ -157,7 +157,7 @@ export function TierForm({ tier, mode }: TierFormProps) {
           <input {...register("price_yearly")} type="number" className={fieldClass} />
         </div>
         <div>
-          <label className={labelClass}>Sort Order</label>
+          <label className={labelClass}>{t("subscriptions.sort_order")}</label>
           <input {...register("sort_order")} type="number" className={fieldClass} />
         </div>
       </div>

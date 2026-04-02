@@ -166,7 +166,8 @@ export async function createTenantAction(data: {
     }));
     return { success: true, data: tenant };
   } catch (err) {
-    return { success: false, error: String(err) };
+    const message = err instanceof Error ? err.message : String(err);
+    return { success: false, error: message };
   }
 }
 
@@ -174,10 +175,18 @@ export async function createTenantAction(data: {
 export async function updateTenantAction(id: number, data: Partial<Tenant>) {
   try {
     const client = getAdminClient();
-    const tenant = await client.request(updateItem('tenants', id, data));
+    // Clean empty strings to null for optional fields Directus may reject
+    const cleaned: Record<string, unknown> = { ...data };
+    for (const key of ['subscription_tier', 'default_language', 'timezone']) {
+      if (cleaned[key] === '' || cleaned[key] === undefined) {
+        cleaned[key] = null;
+      }
+    }
+    const tenant = await client.request(updateItem('tenants', id, cleaned));
     return { success: true, data: tenant };
   } catch (err) {
-    return { success: false, error: String(err) };
+    const message = err instanceof Error ? err.message : String(err);
+    return { success: false, error: message };
   }
 }
 
@@ -188,6 +197,7 @@ export async function toggleTenantStatusAction(id: number, newStatus: 'active' |
     await client.request(updateItem('tenants', id, { status: newStatus }));
     return { success: true };
   } catch (err) {
-    return { success: false, error: String(err) };
+    const message = err instanceof Error ? err.message : String(err);
+    return { success: false, error: message };
   }
 }

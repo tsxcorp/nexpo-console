@@ -12,19 +12,19 @@ import { toast } from "sonner";
 import type { Tenant } from "@/types/tenant";
 
 const createSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email"),
+  name: z.string().min(1),
+  email: z.string().email(),
   status: z.enum(["active", "inactive"]),
   subscription_tier: z.enum(["free", "starter", "pro", "enterprise", ""]).optional(),
   default_language: z.enum(["en", "vi", ""]).optional(),
   timezone: z.string().optional(),
-  admin_first_name: z.string().min(1, "First name is required"),
-  admin_last_name: z.string().min(1, "Last name is required"),
+  admin_first_name: z.string().min(1),
+  admin_last_name: z.string().min(1),
 });
 
 const editSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  email: z.string().email("Invalid email"),
+  name: z.string().min(1),
+  email: z.string().email(),
   status: z.enum(["active", "inactive"]),
   subscription_tier: z.enum(["free", "starter", "pro", "enterprise", ""]).optional(),
   default_language: z.enum(["en", "vi", ""]).optional(),
@@ -117,7 +117,7 @@ export function TenantForm({ tenant, mode }: TenantFormProps) {
 
       <div>
         <label className={labelClass}>{t("tenants.name")} *</label>
-        <input {...register("name")} className={fieldClass} placeholder="Tên tổ chức" />
+        <input {...register("name")} className={fieldClass} placeholder={t("tenants.name_placeholder")} />
         {errs.name && <p className={errorClass}>{errs.name.message}</p>}
       </div>
 
@@ -168,22 +168,22 @@ export function TenantForm({ tenant, mode }: TenantFormProps) {
         <>
           <div className="border-t border-surface-200 dark:border-surface-700 pt-5 mt-6">
             <div className="text-xs font-bold text-surface-400 uppercase tracking-wider mb-3">
-              Admin User — Tenant Admin
+              {t("tenants.admin_section_title")}
             </div>
             <p className="text-xs text-surface-400 mb-4">
-              Hệ thống sẽ tạo tài khoản Directus (dùng email ở trên) với role Tenant Admin và gửi email kèm mật khẩu.
+              {t("tenants.admin_section_desc")}
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Họ *</label>
-              <input {...(register as Function)("admin_first_name")} className={fieldClass} placeholder="Nguyễn" />
+              <label className={labelClass}>{t("tenants.admin_last_name")} *</label>
+              <input {...(register as Function)("admin_first_name")} className={fieldClass} placeholder={t("tenants.admin_last_name_placeholder")} />
               {errs.admin_first_name && <p className={errorClass}>{errs.admin_first_name.message}</p>}
             </div>
             <div>
-              <label className={labelClass}>Tên *</label>
-              <input {...(register as Function)("admin_last_name")} className={fieldClass} placeholder="Văn A" />
+              <label className={labelClass}>{t("tenants.admin_first_name")} *</label>
+              <input {...(register as Function)("admin_last_name")} className={fieldClass} placeholder={t("tenants.admin_first_name_placeholder")} />
               {errs.admin_last_name && <p className={errorClass}>{errs.admin_last_name.message}</p>}
             </div>
           </div>

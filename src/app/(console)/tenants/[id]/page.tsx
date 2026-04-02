@@ -53,7 +53,7 @@ export default function TenantDetailPage({ params }: { params: Promise<{ id: str
   if (!tenant) {
     return (
       <div className="text-center py-20">
-        <p className="text-surface-400 mb-4">Tenant not found</p>
+        <p className="text-surface-400 mb-4">{t("tenants.not_found")}</p>
         <Button variant="secondary" onClick={() => router.push("/tenants")}>
           {t("common.back")}
         </Button>
