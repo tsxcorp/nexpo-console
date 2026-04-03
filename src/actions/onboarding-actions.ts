@@ -146,7 +146,7 @@ export async function onboardTenantAction(data: {
           body: JSON.stringify({
             from_email: "Nexpo Platform <noreply@nexpo.vn>",
             to: data.email,
-            subject: `Chào mừng đến Nexpo — Tài khoản ${data.name}`,
+            subject: `Welcome to Nexpo — ${data.name} / Chào mừng đến Nexpo`,
             html: buildWelcomeEmail({
               tenantName: data.name,
               firstName: data.admin_first_name,
@@ -168,7 +168,7 @@ export async function onboardTenantAction(data: {
           body: JSON.stringify({
             from_email: "Nexpo Platform <noreply@nexpo.vn>",
             to: data.email,
-            subject: `Bạn đã được thêm vào ${data.name} trên Nexpo`,
+            subject: `You've been added to ${data.name} on Nexpo / Bạn đã được thêm vào ${data.name}`,
             html: buildAddedToTenantEmail({
               tenantName: data.name,
               loginUrl: `${ADMIN_APP_URL}/login`,
@@ -201,20 +201,23 @@ function buildWelcomeEmail(params: {
         <p style="color: #666; font-size: 14px; margin: 5px 0 0;">Business Platform & Exhibition Operations</p>
       </div>
       <div style="background: #f8fafc; border-radius: 12px; padding: 30px; border: 1px solid #e2e8f0;">
-        <h2 style="color: #1a1a1a; font-size: 20px; margin: 0 0 15px;">Xin chào ${params.firstName},</h2>
-        <p style="color: #404040; font-size: 15px; line-height: 1.6; margin: 0 0 20px;">
-          Tài khoản <strong>${params.tenantName}</strong> đã được tạo trên nền tảng Nexpo.
-          Nhấn nút bên dưới để đặt mật khẩu và bắt đầu sử dụng.
+        <h2 style="color: #1a1a1a; font-size: 20px; margin: 0 0 15px;">Hi ${params.firstName},</h2>
+        <p style="color: #404040; font-size: 15px; line-height: 1.6; margin: 0 0 8px;">
+          Your account <strong>${params.tenantName}</strong> has been created on Nexpo. Click the button below to set your password and get started.
+        </p>
+        <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0 0 20px;">
+          Tài khoản <strong>${params.tenantName}</strong> đã được tạo trên nền tảng Nexpo. Nhấn nút bên dưới để đặt mật khẩu và bắt đầu sử dụng.
         </p>
         <div style="background: #fff; border-radius: 8px; padding: 16px 20px; border: 1px solid #e5e7eb; margin: 20px 0;">
-          <p style="margin: 0; color: #666; font-size: 14px;">Email đăng nhập: <strong style="color: #1a1a1a;">${params.email}</strong></p>
+          <p style="margin: 0; color: #666; font-size: 14px;">Login email: <strong style="color: #1a1a1a;">${params.email}</strong></p>
         </div>
         <div style="text-align: center; margin: 25px 0;">
           <a href="${params.inviteUrl}" style="display: inline-block; background: #4F80FF; color: #ffffff; text-decoration: none; padding: 14px 36px; border-radius: 8px; font-weight: 600; font-size: 16px;">
-            Đặt mật khẩu & Đăng nhập
+            Set Password & Login / Đặt mật khẩu & Đăng nhập
           </a>
         </div>
         <p style="color: #94a3b8; font-size: 13px; line-height: 1.5; margin: 20px 0 0; border-top: 1px solid #e5e7eb; padding-top: 15px;">
+          This link expires in 48 hours. Need help? Contact <a href="mailto:contact@nexpo.vn" style="color: #4F80FF;">contact@nexpo.vn</a><br/>
           Link có hiệu lực trong 48 giờ. Nếu cần hỗ trợ, liên hệ <a href="mailto:contact@nexpo.vn" style="color: #4F80FF;">contact@nexpo.vn</a>
         </p>
       </div>
@@ -230,11 +233,14 @@ function buildAddedToTenantEmail(params: { tenantName: string; loginUrl: string 
         <h1 style="color: #4F80FF; font-size: 24px; margin: 0;">NEXPO</h1>
       </div>
       <div style="background: #f8fafc; border-radius: 12px; padding: 30px; border: 1px solid #e2e8f0;">
-        <p style="color: #404040; font-size: 15px; line-height: 1.6; margin: 0 0 20px;">
+        <p style="color: #404040; font-size: 15px; line-height: 1.6; margin: 0 0 8px;">
+          You've been added to <strong>${params.tenantName}</strong> on Nexpo as <strong>Admin</strong>.
+        </p>
+        <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0 0 20px;">
           Bạn đã được thêm vào tổ chức <strong>${params.tenantName}</strong> trên Nexpo với vai trò <strong>Admin</strong>.
         </p>
         <div style="text-align: center; margin: 20px 0;">
-          <a href="${params.loginUrl}" style="display: inline-block; background: #4F80FF; color: #fff; text-decoration: none; padding: 12px 32px; border-radius: 8px; font-weight: 600; font-size: 15px;">Đăng nhập</a>
+          <a href="${params.loginUrl}" style="display: inline-block; background: #4F80FF; color: #fff; text-decoration: none; padding: 12px 32px; border-radius: 8px; font-weight: 600; font-size: 15px;">Login / Đăng nhập</a>
         </div>
       </div>
       <p style="color: #94a3b8; font-size: 11px; text-align: center; margin-top: 20px;">© ${new Date().getFullYear()} NEXPO. All rights reserved.</p>
